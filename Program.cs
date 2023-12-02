@@ -96,7 +96,8 @@ namespace BucketSort
 
             for (int i = 1; i < array.Length; i++)
             {
-                    maxVal = array[i] < 0 ? array[i] * -1 > maxVal ? ;
+                if (array[i] > maxVal)
+                    maxVal = array[i];
             }
             // Crea una lista de buckets vacíos
             List<int>[] buckets = new List<int>[maxVal + 1];
