@@ -1,46 +1,121 @@
 ﻿
+using System;
 using System.Diagnostics;
 
 namespace BucketSort
 {
     internal class Program
     {
-
+        private static Random _rand = new Random();
         static void Main(string[] args)
         {
-            int[] array = { 4, 2, 3, 5, 5, 7, 1 };
-            Console.WriteLine("Array antes de ordenar:");
-            PrintArray(array);
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("Seleccione una opción:");
+                Console.WriteLine("1. Utilizar el arreglo directamente (números enteros)");
+                Console.WriteLine("2. Utilizar el método que genera un vector (números enteros)");
+                Console.WriteLine("3. Utilizar el arreglo directamente (números decimales)");
+                Console.WriteLine("4. Utilizar el método que genera un vector (números decimales)");
+                Console.WriteLine("0. Salir");
 
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+                if (!int.TryParse(Console.ReadLine(), out int option))
+                {
+                    Console.WriteLine("Entrada no válida. Por favor, ingrese un número válido.");
+                    Console.ReadKey();
+                    continue;
+                }
 
-            BucketSort_int(array);
+                switch (option)
+                {
+                    case 1:
+                        int[] array1 = { 4, 2, 3, 5, 5, 7, 1 };
+                        Console.WriteLine("Array antes de ordenar:");
+                        PrintArray(array1);
+                        BucketSort_int(array1);
+                        Console.WriteLine("\nArray después de ordenar:");
+                        PrintArray(array1);
+                        break;
 
-            stopwatch.Stop();
+                    case 2:
+                        int[] array2 = GenerarVector();
+                        Console.WriteLine("Array antes de ordenar:");
+                        PrintArray(array2);
+                        BucketSort_int(array2);
+                        Console.WriteLine("\nArray después de ordenar:");
+                        PrintArray(array2);
+                        break;
 
-            Console.WriteLine("\nArray despues de ordenar:");
-            PrintArray(array);
-            Console.WriteLine("\nEl proceso a tardado: " + stopwatch.Elapsed);
-            Console.ReadKey();
-            Console.Clear();
+                    case 3:
+                        double[] array3 = { 0.42, 0.33, 0.37, 0.57, 0.40 };
+                        Console.WriteLine("Array antes de ordenar:");
+                        PrintArray(array3);
+                        BucketSort_Double(array3);
+                        Console.WriteLine("\nArray después de ordenar:");
+                        PrintArray(array3);
+                        break;
 
+                    case 4:
+                        double[] array4 = GenerarVectorDouble();
+                        Console.WriteLine("Array antes de ordenar:");
+                        PrintArray(array4);
+                        BucketSort_Double(array4);
+                        Console.WriteLine("\nArray después de ordenar:");
+                        PrintArray(array4);
+                        break;
 
-            double[] array_2 = { 0.42, 0.33, 0.37, 0.57, 0.40 };
-            Console.WriteLine("Array antes de ordenar:");
-            PrintArray(array_2);
+                    case 0:
+                        return;
 
-            stopwatch.Start();
+                    default:
+                        Console.WriteLine("Opción no válida. Por favor, elija una opción del 0 al 4.");
+                        break;
+                }
+                Console.ReadKey();
+            } while (true);
+        }
 
-            BucketSort_Double(array_2);
+        public static double[] GenerarVectorDouble(int Minon = 0, int Lenght = 10, int values = 5)
+        {
+            List<double> _List = new List<double>();
 
-            stopwatch.Stop();
+            for (int i = Minon; i < Lenght; i++)
+            {
+                if (i < values)
+                {
+                    double NewValor = _rand.NextDouble();
+                    _List.Add(NewValor);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return _List.ToArray();
+        }
 
-            Console.WriteLine("\nArray despues de ordenar:");
-            PrintArray(array_2);
-            Console.WriteLine("\nEl proceso a tardado: " + stopwatch.Elapsed);
-            Console.ReadKey();
-            Console.Clear(); 
+        public static int[] GenerarVector(int Minon = 0, int Lenght = 10, int values = 5)
+        {
+            List<int> _List = new List<int>();
+
+            for (int i = Minon; i < Lenght; i++)
+            {
+                if (i < values)
+                {
+                    int NewValor = _rand.Next(Minon, Lenght + 1);
+                    if (_List.Contains(NewValor))
+                    {
+                        i--;
+                        continue;
+                    }
+                    _List.Add(NewValor);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return _List.ToArray();
         }
 
         private static void PrintArray(double[] doubles)
@@ -52,7 +127,7 @@ namespace BucketSort
             Console.WriteLine();
         }
 
-        static double[] BucketSort_Double(double[] array)
+        static void BucketSort_Double(double[] array)
         {
             // Crear buckets vacíos
             List<double>[] buckets = new List<double>[array.Length];
@@ -67,26 +142,58 @@ namespace BucketSort
                 buckets[(int)(element * array.Length)].Add(element);
             }
 
+            // Imprimir el estado de los buckets después de la inserción
+            PrintBucketState(buckets);
+
             // Ordenar los elementos de cada cubo
             for (int i = 0; i < array.Length; i++)
             {
                 buckets[i].Sort();
             }
 
+            // Imprimir el estado de los buckets después de la ordenación
+            PrintBucketState(buckets);
+
             // Obtener los elementos ordenados
             int k = 0;
             for (int i = 0; i < array.Length; i++)
             {
-                for (int j = 0; j < buckets[i].Count; j++)
+                foreach (var item in buckets[i])
                 {
-                    array[k] = buckets[i][j];
-                    k++;
+                    array[k++] = item;
                 }
             }
-
-            return array;
         }
 
+        static void PrintBucketState(List<int>[] buckets)
+        {
+            Console.WriteLine("Current state of buckets:");
+            for (int i = 0; i < buckets.Length; i++)
+            {
+                Console.Write($"Bucket {i}: ");
+                foreach (var item in buckets[i])
+                {
+                    Console.Write($"{item} ");
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine();
+        }
+
+        static void PrintBucketState(List<double>[] buckets)
+        {
+            Console.WriteLine("Current state of buckets:");
+            for (int i = 0; i < buckets.Length; i++)
+            {
+                Console.Write($"Bucket {i}: ");
+                foreach (var item in buckets[i])
+                {
+                    Console.Write($"{item} ");
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine();
+        }
 
         public static void BucketSort_int(int[] array)
         {
@@ -111,12 +218,14 @@ namespace BucketSort
             {
                 buckets[array[i]].Add(array[i]);
             }
+            PrintBucketState(buckets);
 
             // Ordena cada cubo individualmente
             for (int i = 0; i < buckets.Length; i++)
             {
                 buckets[i].Sort();
             }
+            PrintBucketState(buckets);
 
             // Concatena los elementos ordenados de cada cubo
             int index = 0;
@@ -128,6 +237,7 @@ namespace BucketSort
                 }
             }
         }
+
         static void PrintArray(int[] arr)
         {
             foreach (var item in arr)
