@@ -85,6 +85,11 @@ namespace BucketSort
                 if (i < Values)
                 {
                     double newValue = _rand.NextDouble();
+                    if (list.Contains(newValue))
+                    {
+                        i--;
+                        continue;
+                    }
                     list.Add(newValue);
                 }
                 else
