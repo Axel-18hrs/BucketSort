@@ -119,15 +119,6 @@ namespace BucketSort
             return list.ToArray();
         }
 
-        private static void PrintArray(double[] doubles)
-        {
-            foreach (double item in doubles)
-            {
-                Console.Write(item + " ");
-            }
-            Console.WriteLine();
-        }
-
         static void BucketSort_Double(double[] array)
         {
             // Create empty buckets
